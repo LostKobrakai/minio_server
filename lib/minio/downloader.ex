@@ -89,6 +89,7 @@ defmodule MinioServer.Downloader do
     end
 
     if file_checksum(filename) == checksum do
+      File.chmod(filename, 0o755)
       Logger.info("Checksum matched. MinioServer binary was successfully downloaded.")
       :ok
     else
