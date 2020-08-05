@@ -4,32 +4,32 @@ defmodule MinioServer do
 
   ## Usage
 
-  ```elixir
-  # Config can be used directly with :ex_aws/:ex_aws_s3
-  s3_config = [
-    access_key_id: "minio_key",
-    secret_access_key: "minio_secret",
-    scheme: "http://",
-    region: "local"
-    host: "127.0.0.1",
-    port: 9000,
-    # Minio specific
-    minio_path: "data" # Defaults to minio in your mix project
-  ]
+      # Config can be used directly with :ex_aws/:ex_aws_s3
+      s3_config = [
+        access_key_id: "minio_key",
+        secret_access_key: "minio_secret",
+        scheme: "http://",
+        region: "local",
+        host: "127.0.0.1",
+        port: 9000,
+        # Minio specific
+        minio_path: "data" # Defaults to minio in your mix project
+      ]
 
-  # In a supervisor
-  children = [
-    {MinioServer, s3_config}
-  ]
+      # In a supervisor
+      children = [
+        {MinioServer, s3_config}
+      ]
 
-  # or manually
-  {:ok, _} = MinioServer.start_link(s3_config)
-  ```
+      # or manually
+      {:ok, _} = MinioServer.start_link(s3_config)
+
   """
   use Supervisor
   require Logger
 
   @type architecture :: String.t()
+  @type version :: String.t()
 
   def start_link(init_arg) do
     Supervisor.start_link(__MODULE__, init_arg, name: __MODULE__)

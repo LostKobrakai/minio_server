@@ -33,7 +33,7 @@ easily download them using a mix task:
 ```sh
 mix minio_server.download
 # or directly
-mix minio_server.download --arch darwin-amd64
+mix minio_server.download --arch darwin-amd64 --version latest
 ```
 
 ## Livecycle Configuration

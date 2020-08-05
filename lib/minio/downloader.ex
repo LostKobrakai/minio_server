@@ -2,21 +2,28 @@ defmodule MinioServer.Downloader do
   @moduledoc false
   require Logger
 
-  @version %{
-    name: "2020-03-25T07-03-04Z",
-    checksum: %{
-      "windows-amd64" => "e60b8b43ee0b831434827c484de7e7b46033f0a875676d93ca42618c7bb10e2f",
-      "darwin-amd64" => "c57b00f314cd83691e952e3df26e14f03bf8ade865a81d1d7736560fac8b1e4c",
-      "linux-amd64" => "e034842fec710b115ce40e02df3b2e0bcb3360c5691224a21a42828fcd9e8793",
-      "linux-arm" => "c60c1010a36ad2c4902d4305b106398341d8d3780e776be17f1915386d63208f",
-      "linux-arm64" => "c8265f7aa3071cb0fb8ac90e989d6458eb315a373567e227dbd7da43e814f79a"
-    }
-  }
+  versions_file = Application.compile_env(:minio_server, :versions_file, "versions.json")
+  @external_resource versions_file
+  @versions versions_file
+            |> File.read!()
+            |> Jason.decode!()
 
   @doc "A list of all the available architectures downloadable."
   @spec available_architectures :: [MinioServer.architecture()]
   def available_architectures do
-    Map.keys(@version.checksum)
+    ["windows-amd64", "darwin-amd64", "linux-amd64", "linux-arm", "linux-arm64"]
+  end
+
+  @doc "A list of all the available versions of minio."
+  @spec available_versions :: [MinioServer.version()]
+  def available_versions do
+    @versions |> Map.keys() |> Enum.sort(:desc)
+  end
+
+  @doc "The most recent available version of minio."
+  @spec most_recent_version :: MinioServer.version()
+  def most_recent_version() do
+    List.first(available_versions())
   end
 
   @doc """
@@ -30,6 +37,7 @@ defmodule MinioServer.Downloader do
   """
   @spec download(MinioServer.architecture(), keyword()) :: :exists | :ok | :timeout
   def download(arch, opts \\ []) do
+    version = Keyword.get(opts, :version, most_recent_version())
     force = Keyword.get(opts, :force, false)
     timeout = Keyword.get(opts, :timeout, :infinity)
 
@@ -37,8 +45,12 @@ defmodule MinioServer.Downloader do
       raise "Invalid architecture"
     end
 
+    if version not in available_versions() do
+      raise "Invalid version"
+    end
+
     filename = MinioServer.executable_path(arch)
-    checksum = checksum!(arch)
+    checksum = checksum!(arch, version)
 
     task =
       cond do
@@ -57,13 +69,15 @@ defmodule MinioServer.Downloader do
       task ->
         case task do
           :replace ->
-            Logger.info("Download of minio binary for #{arch}: Replacing existing.")
+            Logger.info(
+              "Download of minio binary for #{arch} (version #{version}): Replacing existing."
+            )
 
           :download ->
-            Logger.info("Download of minio binary for #{arch}.")
+            Logger.info("Download of minio binary for #{arch} (version #{version}).")
         end
 
-        url = url_for_release(arch, @version.name)
+        url = url_for_release(arch, version)
         File.mkdir_p(Path.dirname(filename))
 
         download(url, filename, checksum, timeout)
@@ -106,10 +120,72 @@ defmodule MinioServer.Downloader do
   end
 
   defp url_for_release(arch, version) do
-    "https://dl.min.io/server/minio/release/#{arch}/archive/minio.RELEASE.#{version}"
+    "#{url_for_architecture(arch)}minio.RELEASE.#{version}"
   end
 
-  defp checksum!(arch) do
-    Map.fetch!(@version.checksum, arch)
+  defp url_for_architecture(arch) do
+    "https://dl.min.io/server/minio/release/#{arch}/archive/"
+  end
+
+  defp checksum!(arch, version) do
+    @versions
+    |> Map.fetch!(version)
+    |> Map.fetch!(arch)
+  end
+
+  @doc """
+  Create a json file listing versions of minio based on their cdn and the checksums.
+
+  Does only list versions 2020+, which are available in all `available_architectures()`.
+  """
+  def create_versions_file(path \\ "versions.json") do
+    versions_and_checksums =
+      fetch_release_versions_available_in_all_architectures()
+      |> fetch_checksums()
+
+    File.write(path, Jason.encode!(versions_and_checksums))
+  end
+
+  defp fetch_release_versions_available_in_all_architectures do
+    for arch <- available_architectures() do
+      url = url_for_architecture(arch)
+      headers = [{'Accept', 'application/json'}]
+
+      {:ok, {200, body}} =
+        :httpc.request(:get, {String.to_charlist(url), headers}, [], full_result: false)
+
+      data = body |> List.to_string() |> Jason.decode!()
+      map = for %{"IsDir" => false, "Name" => name} = file <- data, into: %{}, do: {name, file}
+
+      for {<<"minio.RELEASE.", version::binary-size(20)>>, _file} <- map,
+          match?(<<year::binary-size(4), _::binary>> when year >= "2020", version),
+          Map.has_key?(map, "minio.RELEASE.#{version}.sha256sum"),
+          into: MapSet.new() do
+        version
+      end
+    end
+    |> Enum.reduce(&MapSet.intersection/2)
+  end
+
+  defp fetch_checksums(versions) do
+    for version <- versions, arch <- available_architectures() do
+      {version, arch}
+    end
+    |> Task.async_stream(fn {version, arch} ->
+      url = url_for_release(arch, version) <> ".sha256sum"
+
+      {:ok, {200, body}} =
+        :httpc.request(:get, {String.to_charlist(url), []}, [], full_result: false)
+
+      [checksum, <<"minio.RELEASE.", ^version::binary-size(20)>>] =
+        body |> List.to_string() |> String.split()
+
+      {version, arch, checksum}
+    end)
+    |> Enum.group_by(
+      fn {:ok, {version, _, _}} -> version end,
+      fn {:ok, {_, arch, checksum}} -> {arch, checksum} end
+    )
+    |> Map.new(fn {k, list} -> {k, Map.new(list)} end)
   end
 end
