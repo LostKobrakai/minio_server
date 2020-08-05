@@ -9,7 +9,7 @@ s3_config = [
   access_key_id: "minio_key",
   secret_access_key: "minio_secret",
   scheme: "http://",
-  region: "local"
+  region: "local",
   host: "127.0.0.1",
   port: 9000,
   # Minio specific
