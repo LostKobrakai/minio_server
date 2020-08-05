@@ -4,14 +4,21 @@ defmodule MinioServer.MixProject do
   def project do
     [
       app: :minio_server,
-      version: "0.1.1",
+      version: "0.1.2",
       elixir: "~> 1.10",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       name: "Minio Server",
       source_url: "https://github.com/LostKobrakai/minio_server",
       description: "Elixir wrapper around a minio server instance",
-      package: package()
+      package: package(),
+      aliases: [
+        # Create the priv folder before compilation
+        "compile.app": [
+          fn _ -> File.mkdir_p!("priv") end,
+          "compile.app"
+        ]
+      ]
     ]
   end
 
