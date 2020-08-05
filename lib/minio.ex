@@ -90,11 +90,12 @@ defmodule MinioServer do
   * `:timeout` - Time the download is allowed to take. Defaults to `:infinity`.
 
   """
-  @spec download(MinioServer.architecture(), keyword()) :: :exists | :ok | :timeout
-  defdelegate download(arch, opts \\ []), to: MinioServer.Downloader
+  @spec download_server(MinioServer.architecture(), keyword()) :: :exists | :ok | :timeout
+  defdelegate download_server(arch, opts \\ []), to: MinioServer.Downloader
 
+  @doc false
   @spec minio_executable :: Path.t()
-  defp minio_executable do
+  def minio_executable do
     case major_os_type() do
       # For other types please configure the binary manually
       :mac -> executable_path("darwin-amd64")

@@ -15,7 +15,9 @@ defmodule Mix.Tasks.MinioServer.Download do
   @switches [
     force: :boolean,
     arch: :string,
-    version: :string
+    version: :string,
+    skip_client: :boolean,
+    timeout: :integer
   ]
 
   @aliases [
@@ -103,6 +105,6 @@ defmodule Mix.Tasks.MinioServer.Download do
       exit(:shutdown)
     end
 
-    MinioServer.Downloader.download(arch, Keyword.put(opts, :version, version))
+    MinioServer.Downloader.download_server(arch, Keyword.put(opts, :version, version))
   end
 end
