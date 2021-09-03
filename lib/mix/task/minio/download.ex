@@ -40,6 +40,7 @@ defmodule Mix.Tasks.MinioServer.Download do
 
   def input_server_version(opts) do
     versions = MinioServer.Config.available_server_versions()
+
     version =
       case opts[:version] do
         nil ->
@@ -78,12 +79,13 @@ defmodule Mix.Tasks.MinioServer.Download do
       Mix.shell().error("Invalid server version: #{version}")
       exit(:shutdown)
     end
+
     version
   end
 
-
   def input_client_version(opts) do
     versions = MinioServer.Config.available_client_versions()
+
     version =
       case opts[:version] do
         nil ->
@@ -122,45 +124,49 @@ defmodule Mix.Tasks.MinioServer.Download do
       Mix.shell().error("Invalid client version: #{version}")
       exit(:shutdown)
     end
+
     version
   end
 
   def input_arch(opts) do
     arches = MinioServer.Config.available_architectures()
-    arch = case opts[:arch] do
-      nil ->
-        Mix.shell().info("Available architectures:")
 
-        indexed_arches =
-          for {arch, index} <- Enum.with_index(arches, 1),
-              into: %{},
-              do: {index, arch}
+    arch =
+      case opts[:arch] do
+        nil ->
+          Mix.shell().info("Available architectures:")
 
-        indexed_arches
-        |> Enum.sort_by(&elem(&1, 0))
-        |> Enum.map(fn {index, arch} ->
-          Mix.shell().info("#{index}: #{arch}")
-        end)
+          indexed_arches =
+            for {arch, index} <- Enum.with_index(arches, 1),
+                into: %{},
+                do: {index, arch}
 
-        index =
-          Mix.shell().prompt("Select architecture to download: ")
-          |> String.trim()
-          |> Integer.parse()
-          |> case do
-            {int, _} -> int
-            :error -> 0
-          end
+          indexed_arches
+          |> Enum.sort_by(&elem(&1, 0))
+          |> Enum.map(fn {index, arch} ->
+            Mix.shell().info("#{index}: #{arch}")
+          end)
 
-        Map.get(indexed_arches, index)
+          index =
+            Mix.shell().prompt("Select architecture to download: ")
+            |> String.trim()
+            |> Integer.parse()
+            |> case do
+              {int, _} -> int
+              :error -> 0
+            end
 
-      arch ->
-        String.trim(arch)
-    end
+          Map.get(indexed_arches, index)
+
+        arch ->
+          String.trim(arch)
+      end
 
     unless arch in arches do
       Mix.shell().error("Invalid arch: #{arch}")
       exit(:shutdown)
     end
+
     arch
   end
 end

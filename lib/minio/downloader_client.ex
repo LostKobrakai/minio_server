@@ -17,6 +17,7 @@ defmodule MinioServer.DownloaderClient do
     if arch not in Config.available_architectures() do
       raise "Invalid architecture, pick from #{inspect(Config.available_architectures())}"
     end
+
     version = Keyword.get(opts, :version, Config.most_recent_client_version())
 
     if version not in Config.available_client_versions() do

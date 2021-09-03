@@ -6,11 +6,13 @@ defmodule MinioServer.Config do
   end
 
   ####### SERVER ########
-  server_versions_file = Application.compile_env(:minio_server, :versions_file, "versions-server.json")
+  server_versions_file =
+    Application.compile_env(:minio_server, :versions_file, "versions-server.json")
+
   @external_resource server_versions_file
   @server_versions server_versions_file
-            |> File.read!()
-            |> Jason.decode!()
+                   |> File.read!()
+                   |> Jason.decode!()
   def server_versions do
     @server_versions
   end
@@ -29,11 +31,13 @@ defmodule MinioServer.Config do
 
   ####### CLIENT ########
 
-  client_versions_file = Application.compile_env(:minio_server, :versions_file, "versions-client.json")
+  client_versions_file =
+    Application.compile_env(:minio_server, :versions_file, "versions-client.json")
+
   @external_resource client_versions_file
   @client_versions client_versions_file
-            |> File.read!()
-            |> Jason.decode!()
+                   |> File.read!()
+                   |> Jason.decode!()
 
   def client_versions do
     @client_versions
