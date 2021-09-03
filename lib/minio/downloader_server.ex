@@ -25,7 +25,7 @@ defmodule MinioServer.DownloaderServer do
       raise "Invalid version, pick from #{inspect(Config.available_server_versions())}"
     end
 
-    filename = MinioServer.executable_path(arch)
+    filename = Config.executable_path(arch)
     checksum = checksum!(arch, version)
 
     handle_downloading(arch, version, filename, checksum, opts)
