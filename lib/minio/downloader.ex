@@ -22,7 +22,7 @@ defmodule MinioServer.Downloader do
   @doc "A list of all the available architectures downloadable."
   @spec available_architectures :: [MinioServer.architecture()]
   def available_architectures do
-    ["windows-amd64", "darwin-amd64", "linux-amd64", "linux-arm", "linux-arm64"]
+    ["windows-amd64", "darwin-amd64", "darwin-arm64", "linux-amd64", "linux-arm", "linux-arm64"]
   end
 
   @doc "A list of all the available versions of minio."
