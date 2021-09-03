@@ -79,7 +79,7 @@ defmodule MinioServer do
 
   @doc "A list of all the available architectures downloadable."
   @spec available_architectures :: [MinioServer.architecture()]
-  defdelegate available_architectures(), to: MinioServer.Downloader
+  defdelegate available_architectures(), to: MinioServer.Config
 
   @doc """
   Download the binary for a selected architecture
@@ -91,7 +91,10 @@ defmodule MinioServer do
 
   """
   @spec download_server(MinioServer.architecture(), keyword()) :: :exists | :ok | :timeout
-  defdelegate download_server(arch, opts \\ []), to: MinioServer.Downloader
+  defdelegate download_server(arch, opts \\ []), to: MinioServer.DownloaderServer, as: :download
+
+  @spec download_client(MinioServer.architecture(), keyword()) :: :exists | :ok | :timeout
+  defdelegate download_client(arch, opts \\ []), to: MinioServer.DownloaderClient, as: :download
 
   @doc false
   @spec minio_executable :: Path.t()
