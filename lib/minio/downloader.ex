@@ -184,19 +184,6 @@ defmodule MinioServer.Downloader do
     end
   end
 
-  defp r(request_id, timeout) do
-    receive do
-      {:http, {^request_id, :saved_to_file}} ->
-        :ok
-
-      msg ->
-        IO.inspect(msg)
-        r(request_id, timeout)
-    after
-      timeout -> :timeout
-    end
-  end
-
   defp file_checksum(filename) do
     File.stream!(filename, [], 2048)
     |> Enum.reduce(:crypto.hash_init(:sha256), fn line, acc -> :crypto.hash_update(acc, line) end)
