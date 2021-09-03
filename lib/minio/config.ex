@@ -53,7 +53,7 @@ defmodule MinioServer.Config do
   @doc "The most recent available version of minio."
   @spec most_recent_client_version :: MinioServer.version()
   def most_recent_client_version() do
-    List.first(available_server_versions())
+    List.first(available_client_versions())
   end
 
 

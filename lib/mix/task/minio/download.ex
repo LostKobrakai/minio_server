@@ -18,7 +18,7 @@ defmodule Mix.Tasks.MinioServer.Download do
     force: :boolean,
     arch: :string,
     version: :string,
-    skip_client: :boolean,
+    client: :boolean,
     timeout: :integer
   ]
 
@@ -29,12 +29,24 @@ defmodule Mix.Tasks.MinioServer.Download do
   @impl Mix.Task
   def run(args) do
     {opts, _} = OptionParser.parse!(args, strict: @switches, aliases: @aliases)
+    if Keyword.get(opts, :client) do
+      download_client(opts)
+    else
+      download_server(opts)
+    end
+  end
+
+  def download_server(opts) do
     arch = input_arch(opts)
     server_version = input_server_version(opts)
-    client_version = input_client_version(opts)
     Logger.info("SERVER: #{server_version}")
-    Logger.info("CLIENT: #{client_version}")
     MinioServer.DownloaderServer.download(arch, Keyword.put(opts, :version, server_version))
+  end
+
+  def download_client(opts) do
+    arch = input_arch(opts)
+    client_version = input_client_version(opts)
+    Logger.info("CLIENT: #{client_version}")
     MinioServer.DownloaderClient.download(arch, Keyword.put(opts, :version, client_version))
   end
 

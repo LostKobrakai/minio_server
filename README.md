@@ -1,7 +1,7 @@
 # Minio Server
 
 Elixir wrapper around [Minio](https://min.io/). It starts the minio server alongside
-your elixir application. 
+your elixir application.
 
 ```elixir
 # Config can be used directly with :ex_aws/:ex_aws_s3
@@ -31,9 +31,14 @@ The minio binary is not included in the package to save on space. But you can
 easily download them using a mix task:
 
 ```sh
+# with menu to select arch / version
 mix minio_server.download
-# or directly
+
+# download the latest SERVER binary for darwin-amd64
 mix minio_server.download --arch darwin-amd64 --version latest
+
+# download the latest CLIENT binary for darwin-amd64
+mix minio_server.download --client --arch darwin-amd64 --version latest
 ```
 
 ## Livecycle Configuration
@@ -42,7 +47,7 @@ Minio does support lifecycle configuration, which I'm using to expire abandoned
 uploads / multipart chunks. There's an open [PR](https://github.com/ex-aws/ex_aws_s3/pull/87)
 to add the API to `:ex_aws_s3`, but until this is merged it'll also be available
 with `MinioServer.S3Api.put_bucket_lifecycle(bucket, rules)`, if you have `:ex_aws` in
-your dependencies. 
+your dependencies.
 
 ### Example
 
@@ -95,4 +100,3 @@ end
 Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
 be found at [https://hexdocs.pm/minio_server](https://hexdocs.pm/minio_server).
-
