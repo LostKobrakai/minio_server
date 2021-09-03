@@ -99,11 +99,19 @@ defmodule MinioServer do
   @doc false
   @spec minio_executable :: Path.t()
   def minio_executable do
-    case major_os_type() do
-      # For other types please configure the binary manually
-      :mac -> executable_path("darwin-amd64")
-      :win -> executable_path("windows-amd64")
-      :unix -> executable_path("linux-amd64")
+    executable_path(minio_arch())
+  end
+
+  def minio_arch do
+    if Application.get_env(:minio, :arch) do
+      Application.get_env(:minio, :arch)
+    else
+      case major_os_type() do
+        # For other types please configure the binary manually
+        :mac -> "darwin-amd64"
+        :win -> "windows-amd64"
+        :unix -> "linux-amd64"
+      end
     end
   end
 
