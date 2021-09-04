@@ -41,6 +41,15 @@ mix minio_server.download --arch darwin-amd64 --version latest
 mix minio_server.download --client --arch darwin-amd64 --version latest
 ```
 
+## Minio Versions (dev)
+
+To simplify updating available versions for client / server binaries, there are following commands available:
+
+```elixir
+MinioServer.VersionsClient.create_versions_file()
+MinioServer.VersionsServer.create_versions_file()
+```
+
 ## Livecycle Configuration
 
 Minio does support lifecycle configuration, which I'm using to expire abandoned
