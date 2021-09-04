@@ -4,50 +4,16 @@ defmodule MinioServer.CpuInfo do
     cpu_type_sub((os_type()))
   end
 
-  defp cpu_type_sub(:unknown) do
-    cpu_type =
-      :erlang.system_info(:system_architecture) |> List.to_string() |> String.split("-") |> hd
-
-    %{
-      cpu_type: cpu_type,
-    }
-  end
-
-  defp cpu_type_sub(:windows) do
-    :erlang.system_info(:system_architecture) |> List.to_string() |> String.split("-") |> hd
-
-  end
-
-  defp cpu_type_sub(:linux) do
+  defp cpu_type_sub(os_type) when os_type in [:windows, :linux, :unknown] do
     :erlang.system_info(:system_architecture) |> List.to_string() |> String.split("-") |> hd
   end
 
-  defp cpu_type_sub(:freebsd) do
+  defp cpu_type_sub(os_type) when os_type in [:freebsd, :macos] do
     confirm_executable("uname")
-
-    cpu_type =
-      case System.cmd("uname", ["-m"]) do
-        {result, 0} -> result |> String.trim()
-        _ -> raise RuntimeError, message: "uname does not work."
-      end
-
-    cpu_type
-  end
-
-  defp cpu_type_sub(:macos) do
-    confirm_executable("uname")
-
-    cpu_type =
-      try do
-        case System.cmd("uname", ["-m"]) do
-          {result, 0} -> result |> String.trim()
-          _ -> nil
-        end
-      rescue
-        _e in ErlangError -> nil
-      end
-
-    cpu_type
+    case System.cmd("uname", ["-m"]) do
+      {result, 0} -> result |> String.trim()
+      _ -> raise RuntimeError, message: "uname does not work."
+    end
   end
 
   defp confirm_executable(command) do
