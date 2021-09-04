@@ -88,7 +88,7 @@ defmodule Mix.Tasks.MinioServer.Download do
       end
 
     unless version in versions do
-      Mix.shell().error("Invalid server version: #{version}")
+      Mix.shell().error("Invalid server version: #{version}, pick from: #{inspect(versions)}")
       exit(:shutdown)
     end
 
@@ -133,7 +133,7 @@ defmodule Mix.Tasks.MinioServer.Download do
       end
 
     unless version in versions do
-      Mix.shell().error("Invalid client version: #{version}")
+      Mix.shell().error("Invalid client version: #{version}, pick from: #{inspect(versions)}")
       exit(:shutdown)
     end
 
