@@ -18,7 +18,7 @@ defmodule MinioServer.CpuInfo do
   end
 
   defp confirm_executable(command) do
-    if is_nil(System.find_executable(command)) do
+    unless System.find_executable(command) do
       raise RuntimeError, message: "#{command} isn't found."
     end
   end
