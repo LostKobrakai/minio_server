@@ -45,7 +45,7 @@ defmodule MinioServer.MixProject do
   defp package() do
     [
       # These are the default files included in the package
-      files: ~w(lib .formatter.exs mix.exs versions.json README* LICENSE*),
+      files: ~w(lib .formatter.exs mix.exs versions-client.json versions-server.json README* LICENSE*),
       licenses: ["Apache-2.0"],
       links: %{"GitHub" => "https://github.com/LostKobrakai/minio_server"}
     ]
