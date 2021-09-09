@@ -3,7 +3,14 @@ defmodule MinioServer.Config do
   @doc "A list of all the available architectures downloadable."
   @spec available_architectures :: [MinioServer.architecture()]
   def available_architectures do
-    ["windows-amd64", "darwin-amd64", "darwin-arm64", "linux-amd64", "linux-arm", "linux-arm64"]
+    [
+      "darwin-amd64",
+      "darwin-arm64",
+      "linux-amd64",
+      "linux-arm",
+      "linux-arm64",
+      "windows-amd64"
+    ]
   end
 
   ####### SERVER ########
@@ -55,7 +62,6 @@ defmodule MinioServer.Config do
   def most_recent_client_version() do
     List.first(available_client_versions())
   end
-
 
   ### Arch + executable path
 
