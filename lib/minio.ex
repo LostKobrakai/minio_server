@@ -72,7 +72,6 @@ defmodule MinioServer do
     Supervisor.init(children, strategy: :one_for_one)
   end
 
-
   @doc "A list of all the available architectures downloadable."
   @spec available_architectures :: [MinioServer.architecture()]
   defdelegate available_architectures(), to: MinioServer.Config

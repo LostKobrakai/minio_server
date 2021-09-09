@@ -1,7 +1,8 @@
 defmodule MinioServer.Downloader do
   require Logger
 
-  def handle_downloading(type, arch, version, url, filename, checksum, opts) when type in [:server, :client] do
+  def handle_downloading(type, arch, version, url, filename, checksum, opts)
+      when type in [:server, :client] do
     force = Keyword.get(opts, :force, false)
     timeout = Keyword.get(opts, :timeout, :timer.seconds(300))
 

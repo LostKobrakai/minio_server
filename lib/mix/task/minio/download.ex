@@ -29,6 +29,7 @@ defmodule Mix.Tasks.MinioServer.Download do
   @impl Mix.Task
   def run(args) do
     {opts, _} = OptionParser.parse!(args, strict: @switches, aliases: @aliases)
+
     if Keyword.get(opts, :client) do
       download_client(opts)
     else

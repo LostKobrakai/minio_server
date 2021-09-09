@@ -29,7 +29,15 @@ defmodule MinioServer.DownloaderServer do
     checksum = checksum!(arch, version)
     url = url_for_release(arch, version)
 
-    MinioServer.Downloader.handle_downloading(:server, arch, version, url, filename, checksum, opts)
+    MinioServer.Downloader.handle_downloading(
+      :server,
+      arch,
+      version,
+      url,
+      filename,
+      checksum,
+      opts
+    )
   end
 
   defp url_for_release(arch, version) do
