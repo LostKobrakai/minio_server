@@ -1,7 +1,10 @@
 defmodule MinioServer.DownloaderClient do
-  @moduledoc false
+  @moduledoc """
+  Downloader for `mc` clients
+  """
   require Logger
   alias MinioServer.Config
+  alias MinioServer.Versions
 
   @doc """
   Download the client binary for a selected architecture
@@ -24,9 +27,9 @@ defmodule MinioServer.DownloaderClient do
       raise "Invalid version, pick from #{inspect(Config.available_client_versions())}"
     end
 
-    filename = Config.executable_path(arch) |> Path.dirname() |> Path.join("mc")
+    filename = Config.executable_path(arch, "mc")
     checksum = checksum!(arch, version)
-    url = url_for_release(arch, version)
+    url = Versions.download_setup(:client).release_url.(arch, version)
 
     MinioServer.Downloader.handle_downloading(
       :client,
@@ -37,10 +40,6 @@ defmodule MinioServer.DownloaderClient do
       checksum,
       opts
     )
-  end
-
-  defp url_for_release(arch, version) do
-    "https://dl.min.io/client/mc/release/#{arch}/archive/mc.RELEASE.#{version}"
   end
 
   defp checksum!(arch, version) do

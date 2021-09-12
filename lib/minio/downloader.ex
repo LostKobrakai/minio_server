@@ -1,4 +1,5 @@
 defmodule MinioServer.Downloader do
+  @moduledoc false
   require Logger
 
   def handle_downloading(type, arch, version, url, filename, checksum, opts)

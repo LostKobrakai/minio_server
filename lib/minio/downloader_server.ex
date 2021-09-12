@@ -1,7 +1,10 @@
 defmodule MinioServer.DownloaderServer do
-  @moduledoc false
-  alias MinioServer.Config
+  @moduledoc """
+  Downloader for `minio` server binaries
+  """
   require Logger
+  alias MinioServer.Config
+  alias MinioServer.Versions
 
   @doc """
   Download the server binary for a selected architecture
@@ -27,7 +30,7 @@ defmodule MinioServer.DownloaderServer do
 
     filename = Config.executable_path(arch)
     checksum = checksum!(arch, version)
-    url = url_for_release(arch, version)
+    url = Versions.download_setup(:server).release_url.(arch, version)
 
     MinioServer.Downloader.handle_downloading(
       :server,
@@ -38,10 +41,6 @@ defmodule MinioServer.DownloaderServer do
       checksum,
       opts
     )
-  end
-
-  defp url_for_release(arch, version) do
-    "https://dl.min.io/server/minio/release/#{arch}/archive/minio.RELEASE.#{version}"
   end
 
   defp checksum!(arch, version) do

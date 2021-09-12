@@ -1,5 +1,6 @@
 # With ideas from from https://github.com/zeam-vm/cpu_info/blob/master/lib/cpu_info.ex
 defmodule MinioServer.CpuInfo do
+  @moduledoc false
   def cpu_type do
     os_type()
     |> cpu_type_sub()

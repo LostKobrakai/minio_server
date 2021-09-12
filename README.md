@@ -46,8 +46,8 @@ mix minio_server.download --client --arch darwin-amd64 --version latest
 To simplify updating available versions for client / server binaries, there are following commands available:
 
 ```elixir
-MinioServer.VersionsClient.create_versions_file()
-MinioServer.VersionsServer.create_versions_file()
+MinioServer.Versions.create_versions_file(:client)
+MinioServer.Versions.create_versions_file(:server)
 ```
 
 ## Livecycle Configuration

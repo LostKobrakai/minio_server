@@ -46,11 +46,26 @@ defmodule MinioServer do
     minio_path = Keyword.get(init_arg, :minio_path, Path.expand("minio", "."))
     minio_executable = Keyword.get(init_arg, :minio_executable, Config.minio_executable())
 
+    additional_args =
+      Enum.reduce(init_arg, [], fn
+        {:client_address, addr}, acc -> [["--console-address", addr] | acc]
+        _, acc -> acc
+      end)
+      |> Enum.reverse()
+      |> List.flatten()
+
     children = [
       {MuonTrap.Daemon,
        [
          minio_executable,
-         ["server", "--json", "--quiet", "--address", "#{host}:#{port}", minio_path],
+         [
+           "server",
+           minio_path,
+           "--json",
+           "--quiet",
+           "--address",
+           "#{host}:#{port}" | additional_args
+         ],
          [
            log_output: :info,
            log_prefix: "[minio] ",
