@@ -81,7 +81,8 @@ defmodule MinioServer do
     Logger.info("Running minio server at #{host}:#{port}")
 
     if ui do
-      Logger.info("Access minio server UI at http://#{host}:#{port}")
+      ui_port = if port = Keyword.get(init_arg, :console_address), do: port, else: ":#{port}"
+      Logger.info("Access minio server UI at http://#{host}#{ui_port}")
     end
 
     Supervisor.init(children, strategy: :one_for_one)
