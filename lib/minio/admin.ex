@@ -4,6 +4,8 @@ defmodule MinioServer.Admin do
   """
   @alias "minio_server"
 
+  alias MinioServer.Config
+
   @doc "Print shell alias for given config to use with own `mc` binary"
   def alias_export(config) do
     {env, value} = host_env(config)
@@ -67,13 +69,13 @@ defmodule MinioServer.Admin do
   end
 
   defp mc do
-    MinioServer.minio_executable()
+    Config.minio_executable()
     |> Path.dirname()
     |> Path.join("mc")
   end
 
   defp config_dir do
-    MinioServer.minio_executable()
+    Config.minio_executable()
     |> Path.dirname()
     |> Path.join(".mc")
   end

@@ -27,6 +27,7 @@ defmodule MinioServer do
   """
   use Supervisor
   require Logger
+  alias MinioServer.Config
 
   @type architecture :: String.t()
   @type version :: String.t()
@@ -43,7 +44,7 @@ defmodule MinioServer do
     port = Keyword.get(init_arg, :port, 9000)
     ui = Keyword.get(init_arg, :ui, true)
     minio_path = Keyword.get(init_arg, :minio_path, Path.expand("minio", "."))
-    minio_executable = Keyword.get(init_arg, :minio_executable, minio_executable())
+    minio_executable = Keyword.get(init_arg, :minio_executable, Config.minio_executable())
 
     children = [
       {MuonTrap.Daemon,
@@ -71,15 +72,9 @@ defmodule MinioServer do
     Supervisor.init(children, strategy: :one_for_one)
   end
 
-  @doc "Path to the executable binaries downloaded."
-  @spec executable_path(MinioServer.architecture()) :: Path.t()
-  def executable_path(arch) do
-    Application.app_dir(:minio_server, "priv/minio/#{arch}/minio")
-  end
-
   @doc "A list of all the available architectures downloadable."
   @spec available_architectures :: [MinioServer.architecture()]
-  defdelegate available_architectures(), to: MinioServer.Downloader
+  defdelegate available_architectures(), to: MinioServer.Config
 
   @doc """
   Download the binary for a selected architecture
@@ -91,24 +86,8 @@ defmodule MinioServer do
 
   """
   @spec download_server(MinioServer.architecture(), keyword()) :: :exists | :ok | :timeout
-  defdelegate download_server(arch, opts \\ []), to: MinioServer.Downloader
+  defdelegate download_server(arch, opts \\ []), to: MinioServer.DownloaderServer, as: :download
 
-  @doc false
-  @spec minio_executable :: Path.t()
-  def minio_executable do
-    case major_os_type() do
-      # For other types please configure the binary manually
-      :mac -> executable_path("darwin-amd64")
-      :win -> executable_path("windows-amd64")
-      :unix -> executable_path("linux-amd64")
-    end
-  end
-
-  defp major_os_type do
-    case :os.type() do
-      {:win32, _} -> :win
-      {:unix, :darwin} -> :mac
-      {other, _} -> other
-    end
-  end
+  @spec download_client(MinioServer.architecture(), keyword()) :: :exists | :ok | :timeout
+  defdelegate download_client(arch, opts \\ []), to: MinioServer.DownloaderClient, as: :download
 end
