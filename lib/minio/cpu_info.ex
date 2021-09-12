@@ -1,11 +1,15 @@
 # With ideas from from https://github.com/zeam-vm/cpu_info/blob/master/lib/cpu_info.ex
 defmodule MinioServer.CpuInfo do
   def cpu_type do
-    cpu_type_sub(os_type())
+    os_type()
+    |> cpu_type_sub()
   end
 
   defp cpu_type_sub(os_type) when os_type in [:windows, :linux, :unknown] do
-    :erlang.system_info(:system_architecture) |> List.to_string() |> String.split("-") |> hd
+    :erlang.system_info(:system_architecture)
+    |> List.to_string()
+    |> String.split("-")
+    |> hd
   end
 
   defp cpu_type_sub(os_type) when os_type in [:freebsd, :macos] do
