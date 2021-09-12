@@ -48,7 +48,7 @@ defmodule MinioServer do
 
     additional_args =
       Enum.reduce(init_arg, [], fn
-        {:client_address, addr}, acc -> [["--console-address", addr] | acc]
+        {:console_address, addr}, acc -> [["--console-address", addr] | acc]
         _, acc -> acc
       end)
       |> Enum.reverse()
