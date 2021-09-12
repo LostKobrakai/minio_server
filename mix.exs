@@ -35,7 +35,7 @@ defmodule MinioServer.MixProject do
       {:muontrap, "~> 0.5.0"},
       {:jason, "~> 1.1"},
       {:ex_aws, "~> 2.0", optional: true},
-      {:ex_aws_s3, "~> 2.0", only: [:dev, :test]},
+      {:ex_aws_s3, "~> 2.2", only: [:dev, :test]},
       {:hackney, "~> 1.15", only: [:dev, :test]},
       {:sweet_xml, "~> 0.6", only: [:dev, :test]},
       {:ex_doc, "~> 0.25", only: :dev, runtime: false}
@@ -45,7 +45,8 @@ defmodule MinioServer.MixProject do
   defp package() do
     [
       # These are the default files included in the package
-      files: ~w(lib .formatter.exs mix.exs versions-client.json versions-server.json README* LICENSE*),
+      files:
+        ~w(lib .formatter.exs mix.exs versions-client.json versions-server.json README* LICENSE*),
       licenses: ["Apache-2.0"],
       links: %{"GitHub" => "https://github.com/LostKobrakai/minio_server"}
     ]

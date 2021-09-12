@@ -53,10 +53,7 @@ MinioServer.VersionsServer.create_versions_file()
 ## Livecycle Configuration
 
 Minio does support lifecycle configuration, which I'm using to expire abandoned
-uploads / multipart chunks. There's an open [PR](https://github.com/ex-aws/ex_aws_s3/pull/87)
-to add the API to `:ex_aws_s3`, but until this is merged it'll also be available
-with `MinioServer.S3Api.put_bucket_lifecycle(bucket, rules)`, if you have `:ex_aws` in
-your dependencies.
+uploads / multipart chunks. 
 
 ### Example
 
@@ -89,7 +86,7 @@ livecycle_rules = [
 ]
 
 {:ok, _} =
-  MinioServer.S3Api.put_bucket_lifecycle("default", livecycle_rules)
+  ExAws.S3.put_bucket_lifecycle("default", livecycle_rules)
   |> ExAws.request(config)
 ```
 
