@@ -2,7 +2,7 @@ defmodule MinioServer.Versions do
   @moduledoc """
   Create version listings of minio binaries based on their cdn and the checksums.
 
-  Does skip version before 2020.
+  Does skip version before 2024.
   """
   alias MinioServer.Config
 
@@ -45,7 +45,7 @@ defmodule MinioServer.Versions do
       size = byte_size(prefix)
 
       for <<^prefix::binary-size(size), version::binary-size(20)>> <- files,
-          match?(<<year::binary-size(4), _::binary>> when year >= "2020", version),
+          match?(<<year::binary-size(4), _::binary>> when year >= "2024", version),
           MapSet.member?(files, "#{setup.binary}.RELEASE.#{version}.sha256sum"),
           into: MapSet.new() do
         version
