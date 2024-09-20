@@ -32,13 +32,14 @@ defmodule MinioServer.Versions do
   defp fetch_release_versions_available_in_all_architectures(arches, setup) do
     arches
     |> Task.async_stream(fn arch ->
-      listing =
+      file_links =
         arch
         |> setup.versions_url.()
-        |> request([{"Accept", "application/json"}])
-        |> Jason.decode!()
+        |> request()
+        |> Floki.parse_document!()
+        |> Floki.find("#list tr > td:first-child > a")
 
-      files = for %{"IsDir" => false, "Name" => name} <- listing, into: MapSet.new(), do: name
+      files = for {"a", _children, [name]} <- file_links, into: MapSet.new(), do: name
 
       prefix = "#{setup.binary}.RELEASE."
       size = byte_size(prefix)
