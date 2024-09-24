@@ -38,7 +38,8 @@ defmodule MinioServer.MixProject do
       {:ex_aws_s3, "~> 2.2", only: [:dev, :test]},
       {:hackney, "~> 1.15", only: [:dev, :test]},
       {:sweet_xml, "~> 0.6", only: [:dev, :test]},
-      {:ex_doc, "~> 0.25", only: :dev, runtime: false}
+      {:ex_doc, "~> 0.25", only: :dev, runtime: false},
+      {:ssl_verify_fun, "~> 1.1.7", only: [:dev, :test]}
     ]
   end
 
