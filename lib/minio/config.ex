@@ -80,7 +80,9 @@ defmodule MinioServer.Config do
     executable_path(minio_arch())
   end
 
-  defp minio_arch do
+  @doc "MinIO architecture matching the current machine."
+  @spec minio_arch :: MinioServer.architecture()
+  def minio_arch do
     case {CpuInfo.os_type(), CpuInfo.cpu_type()} do
       {:macos, "arm64"} -> "darwin-arm64"
       {:macos, _} -> "darwin-amd64"

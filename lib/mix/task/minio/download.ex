@@ -171,6 +171,11 @@ defmodule Mix.Tasks.MinioServer.Download do
 
           Map.get(indexed_arches, index)
 
+        "auto" ->
+          arch = MinioServer.Config.minio_arch()
+          Mix.shell().info("Automatically detected architecture #{arch}")
+          arch
+
         arch ->
           String.trim(arch)
       end
