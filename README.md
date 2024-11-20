@@ -56,7 +56,7 @@ MinioServer.Versions.create_versions_file(:server)
 ## Livecycle Configuration
 
 Minio does support lifecycle configuration, which I'm using to expire abandoned
-uploads / multipart chunks. 
+uploads / multipart chunks.
 
 ### Example
 
@@ -101,7 +101,7 @@ by adding `minio_server` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:minio_server, "~> 0.1.0"}
+    {:minio_server, "~> 0.4.0"}
   ]
 end
 ```
