@@ -39,6 +39,7 @@ defmodule MinioServer.MixProject do
       {:hackney, "~> 1.15", only: [:dev, :test]},
       {:sweet_xml, "~> 0.6", only: [:dev, :test]},
       {:ex_doc, "~> 0.25", only: :dev, runtime: false},
+      {:ssl_verify_fun, "~> 1.1.7", only: [:dev, :test]},
       {:floki, "~> 0.36.0", only: :dev}
     ]
   end

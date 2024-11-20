@@ -34,6 +34,9 @@ easily download them using a mix task:
 # with menu to select arch / version
 mix minio_server.download
 
+# download the latest SERVER binary matching the current machine
+mix minio_server.download --arch auto --version latest
+
 # download the latest SERVER binary for darwin-amd64
 mix minio_server.download --arch darwin-amd64 --version latest
 
