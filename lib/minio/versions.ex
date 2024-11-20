@@ -2,7 +2,7 @@ defmodule MinioServer.Versions do
   @moduledoc """
   Create version listings of minio binaries based on their cdn and the checksums.
 
-  Does skip version before 2020.
+  Does skip version before 2024.
   """
   alias MinioServer.Config
 
@@ -32,19 +32,20 @@ defmodule MinioServer.Versions do
   defp fetch_release_versions_available_in_all_architectures(arches, setup) do
     arches
     |> Task.async_stream(fn arch ->
-      listing =
+      file_links =
         arch
         |> setup.versions_url.()
-        |> request([{"Accept", "application/json"}])
-        |> Jason.decode!()
+        |> request()
+        |> Floki.parse_document!()
+        |> Floki.find("#list tr > td:first-child > a")
 
-      files = for %{"IsDir" => false, "Name" => name} <- listing, into: MapSet.new(), do: name
+      files = for {"a", _children, [name]} <- file_links, into: MapSet.new(), do: name
 
       prefix = "#{setup.binary}.RELEASE."
       size = byte_size(prefix)
 
       for <<^prefix::binary-size(size), version::binary-size(20)>> <- files,
-          match?(<<year::binary-size(4), _::binary>> when year >= "2020", version),
+          match?(<<year::binary-size(4), _::binary>> when year >= "2024", version),
           MapSet.member?(files, "#{setup.binary}.RELEASE.#{version}.sha256sum"),
           into: MapSet.new() do
         version
